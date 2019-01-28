@@ -64,7 +64,7 @@ sh test.sh 0 0 demo/
 ### 4. Sample Results on the Demo videos
 
 <p align="center">
-    <img src="demo/a.gif.gif", width="480">
+    <img src="demo/a.gif", width="480">
     <br>
 </p>
 
