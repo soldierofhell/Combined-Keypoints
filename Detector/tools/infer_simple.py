@@ -86,7 +86,7 @@ def parse_args():
         help='directory to save demo results',
         default="infer_outputs")
     parser.add_argument(
-        '--merge_pdfs', type=distutils.util.strtobool, default=True)
+        '--merge_pdfs', type=distutils.util.strtobool, default=False)
     parser.add_argument(
         '--visualize', type=distutils.util.strtobool, default=False)
 
@@ -360,11 +360,10 @@ def main():
              thresh=0.3,
              kp_thresh=0.1
          )
-         output_name = os.path.basename(im_name) + '.png' 
+         output_name = os.path.basename(im_name) + '.jpg' 
          im = cv2.imread(os.path.join(args.output_dir, '{}'.format(output_name)))
          if im is None:
             continue
-         continue
          vis_utils.vis_one_image(
              im[:, :, ::-1],  # BGR -> RGB for visualization
              im_name,
@@ -376,7 +375,7 @@ def main():
              box_alpha=0.3,
              show_class=True,
              thresh=0.3,
-             kp_thresh=10
+             kp_thresh=0.1
          )
 
     if args.merge_pdfs and num_images > 1 and save_image==True:
