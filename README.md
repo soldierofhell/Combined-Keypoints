@@ -29,4 +29,37 @@ sh make.sh
 
 ### 3. To run the detectors on Images or Videos
  
+## Pretrained Model
+
+I use ImageNet pretrained weights from Caffe for the backbone networks.
+
+- [ResNet50](https://drive.google.com/open?id=1wHSvusQ1CiEMc5Nx5R8adqoHQjIDWXl1), [ResNet101](https://drive.google.com/open?id=1x2fTMqLrn63EMW0VuK4GEa2eQKzvJ_7l), [ResNet152](https://drive.google.com/open?id=1NSCycOb7pU0KzluH326zmyMFUU55JslF)
+- [VGG16](https://drive.google.com/open?id=19UphT53C0Ua9JAtICnw84PPTa3sZZ_9k)  (vgg backbone is not implemented yet)
+
+Download them and put them into the `{repo_root}/data/pretrained_model`.
+
+You can the following command to download them all:
+
+- extra required packages: `argparse_color_formater`, `colorama`, `requests`
+
+```
+python tools/download_imagenet_weights.py
+```
+
+**NOTE**: Caffe pretrained weights have slightly better performance than Pytorch pretrained. Suggest to use Caffe pretrained models from the above link to reproduce the results. By the way, Detectron also use pretrained weights from Caffe.
+
+**If you want to use pytorch pre-trained models, please remember to transpose images from BGR to RGB, and also use the same data preprocessing (minus mean and normalize) as used in Pytorch pretrained model.**
+
+Download the trained Keypoint models for cars and persons and place them i9n the home folder
+
+- [Cars](https://drive.google.com/open?id=1wHhtmYiBZexR2UMjBNuV-1J9ELZ9NV7n), [Persons](https://drive.google.com/open?id=13Dn9_K-DvElBKGpc_AcwRNr6gmSEC6cR)
+
+
+
+## Excecuting on a video
+Run the following commands to run the detector on a video
+```
+sh test.sh 0 0 1
+```
+
 
