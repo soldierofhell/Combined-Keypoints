@@ -16,3 +16,4 @@ ipython
 shapely
 packaging
 pycocotools
+sklearn
