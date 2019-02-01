@@ -51,7 +51,7 @@ python tools/download_imagenet_weights.py
 
 Download the trained Keypoint models for cars and persons and place them in the home folder
 
-- [Cars](https://drive.google.com/open?id=1wHhtmYiBZexR2UMjBNuV-1J9ELZ9NV7n), [Persons](https://drive.google.com/open?id=13Dn9_K-DvElBKGpc_AcwRNr6gmSEC6cR)
+- [Cars](https://drive.google.com/open?id=1wHhtmYiBZexR2UMjBNuV-1J9ELZ9NV7n), [Persons](https://drive.google.com/open?id=13Dn9_K-DvElBKGpc_AcwRNr6gmSEC6cR) [Cars-v2](https://drive.google.com/file/d/1O5ZYkES73aIu6r9s7yYeI-KE57F1HxID/view?usp=sharing)
 
 
 
