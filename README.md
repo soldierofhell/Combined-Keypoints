@@ -68,4 +68,14 @@ sh test.sh 0 0 demo/
     <br>
 </p>
 
+### training on carfusion data
 
+
+```
+wget http://www.cs.cmu.edu/~ILIM/projects/IM/CarFusion/Dataset.zip
+
+unzip Dataset
+
+
+sh train.sh
+```
