@@ -53,7 +53,7 @@ def getAnnotation(instance):
         #print(instance, num_keypoints)
 
     except:
-        print("failed finding any keypoint")
+        #print("failed finding any keypoint")
         #print(instance, num_keypoints)
         #asasas#print(instance, num_keypoints)
         bbox = [0, 0, 0, 0]
