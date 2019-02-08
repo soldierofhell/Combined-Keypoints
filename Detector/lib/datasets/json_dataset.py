@@ -377,8 +377,8 @@ class JsonDataset(object):
                 zip(keypoints, range(len(keypoints))))
             self.keypoints = keypoints
             self.num_keypoints = len(keypoints)
-            print(cfg.KRGNN.NUM_KEYPOINTS,self.num_keypoints)
-            if cfg.KRGNN.NUM_KEYPOINTS != -1:
+            print(cfg.KRCNN.NUM_KEYPOINTS,self.num_keypoints)
+            if cfg.KRCNN.NUM_KEYPOINTS != -1:
                 print("her1e")
                 #assert cfg.KRCNN.NUM_KEYPOINTS == self.num_keypoints, \
                 #    "number of keypoints should equal when using multiple datasets"

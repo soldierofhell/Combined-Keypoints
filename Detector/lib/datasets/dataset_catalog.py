@@ -201,9 +201,9 @@ DATASETS = {
     },
     'keypoints_carfusion_fifth': {
         IM_DIR:
-            _DATA_DIR + '/train/',
+            _DATA_DIR + '/fifth/',
         ANN_FN:
-            _DATA_DIR + '/train/car_fifth.json'
+            _DATA_DIR + '/fifth/car_fifth.json'
     },
     'keypoints_carfusion_butler': {
         IM_DIR:
