@@ -16,7 +16,7 @@ Install required python libraries
 ```
 virtualenv Combined-Keypoints -p python3.6
 source Combined-Keypoints/bin/activate
-pip3 install cython
+pip3 install numpy cython
 pip3 install -r requirements.txt
 
 ```
