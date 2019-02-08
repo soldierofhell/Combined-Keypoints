@@ -81,6 +81,6 @@ cd fifth
 wget http://www.cs.cmu.edu/~ILIM/projects/IM/CarFusion/Dataset.zip
 unzip Dataset.zip
 mv Dataset train
-cd ..
+cd ../../..
 sh train.sh
 ```
