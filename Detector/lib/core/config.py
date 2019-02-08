@@ -1037,7 +1037,7 @@ __C.EPS = 1e-14
 __C.ROOT_DIR = osp.abspath(osp.join(osp.dirname(__file__), '..', '..'))
 
 # Output basedir
-__C.OUTPUT_DIR = '/media/Car/Carfusion_Dataset/cache/Outputs'
+__C.OUTPUT_DIR = './Detector/data/cache/'
 
 
 # Name (or path to) the matlab executable
