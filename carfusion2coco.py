@@ -13,7 +13,6 @@ import numpy as np
 #from scipy.misc import imsave
 #import cv2
 from shapely.geometry import Polygon
-from pycocotools.coco import COCO
 
 def num(s):
     try:
@@ -26,40 +25,33 @@ def getAnnotation(instance):
 
     width, height = 1920, 1080
 
-    valid_2 = instance[:, 2] == 1
     valid = instance[:, 2] == 2
-    #print(instance)
 
-    visible = np.logical_or(valid, valid_2)
+    visible = np.logical_and(valid, instance[:,0] >= 0)
+    visible = np.logical_and(instance[:,0] < width, visible)
+    visible = np.logical_and(instance[:,1] >= 0, visible)
+    visible = np.logical_and(instance[:,1] < height, visible)
+    
     num_keypoints = int(np.sum(visible))
 
     keypoints = np.zeros((14,3), dtype=np.int32)
+
     try:
-        hull = Polygon([(x[0], x[1]) for x in instance[visible, :2]]).convex_hull
+        hull = Polygon([(x[0], x[1]) for x in instance[valid, :2]]).convex_hull
         frame = Polygon([(0, 0), (width, 0), (width, height), (0, height)])
         hull = hull.intersection(frame).convex_hull
 
         bbox = hull.bounds
         w, h = bbox[2]-bbox[0], bbox[3]-bbox[1]
-#        bbox = [int(bbox[0]), int(bbox[1]), int(w), int(h)]
-
-        x_o = max(bbox[0]-(w/10),0)
-        y_o = max(bbox[1]-(h/10),0)
-        x_i = min(x_o+(w/4)+w,width)
-        y_i = min(y_o+(h/4)+h,height)
-        bbox = [int(x_o), int(y_o), int(x_i - x_o), int(y_i - y_o)]
-
+        bbox = [int(bbox[0]-w*0.1), int(bbox[1]-h*0.1), int(w*1.2), int(h*1.2)]
 
         segmentation = list(hull.convex_hull.exterior.coords)[:-1]
         segmentation = [[int(x[0]), int(x[1])] for x in segmentation]
 
-        keypoints[:, :] = instance[:, :]
-        #print(instance, num_keypoints)
+        keypoints[visible, :] = instance[visible, :]
 
     except:
         print("failed finding any keypoint")
-        #print(instance, num_keypoints)
-        #asasas#print(instance, num_keypoints)
         bbox = [0, 0, 0, 0]
         segmentation = []
 
@@ -90,9 +82,9 @@ if __name__ == "__main__":
     label_dir = args.label_dir
     path_dir = args.path_dir
 
-    #if not os.path.exists(label_dir):
-    #    print("Can not locate label folder: " + label_dir)
-    #    quit()
+    if not os.path.exists(label_dir):
+        print("Can not locate label folder: " + label_dir)
+        quit()
 
 
     data = {}
@@ -136,99 +128,40 @@ if __name__ == "__main__":
 
     obj_id = 0
     # expect sub-folder for subsets
-    data["images"] = []
-    data["annotations"] = []
-    json_name = path_dir + 'car_carfusion_coco.json'
-
-    dataDir= path_dir + '/../coco/'
-    dataType='val2017'
-    annFile='{}/annotations/instances_{}.json'.format(dataDir,dataType)
-
-    coco=COCO(annFile)
-
-    keypoints=np.ones(42,)*0
-    keypoints = keypoints.tolist()
-    keypoints = [int(x) for x in keypoints]
-    print(keypoints)
-    catIds = coco.getCatIds(catNms=['car']);
-    imgIds = coco.getImgIds(catIds=catIds );
-    for ind,index in enumerate(imgIds):
-        img = coco.loadImgs(index)[0]
-        annIds = coco.getAnnIds(imgIds=img['id'], catIds=catIds, iscrowd=None)
-        annotations = coco.loadAnns(annIds)
-        data["images"].append({'flickr_url': "unknown",
-            'coco_url': "unknown",
-            'file_name': '../coco/images/'+dataType+'/'+img["file_name"],
-            'id': int(img["id"]),
-            'license':1,
-            #'has_visible_keypoints':False,
-            'date_captured': "unknown",
-            'width': img["width"],
-            'height': img["height"]})
-        for a,ann in enumerate(annotations):
-            if ann['category_id']==catIds[0] and len(ann['segmentation'])==1:
-                print(len(ann['segmentation']))
-                keypoints=np.ones(42,)*0
-                #keypoints[2]=2
-                keypoints = keypoints.tolist()
-                keypoints = [int(x) for x in keypoints]
-                keypoints[-1]=2
-                keypoints[-3]=ann['bbox'][0]+ann['bbox'][2]/2
-                keypoints[-2]=ann['bbox'][1]+ann['bbox'][3]/2
-                #keypoints[1]=ann['segmentation'][0][3]
-                #keypoints[0]=ann['segmentation'][0][2]
-                print(keypoints,ann['bbox'])
-                data["annotations"].append({
-                        'image_id': int(img["id"]),
-                        'category_id': 1,
-                        'iscrowd': 0,
-                        #'has_visible_keypoints': True,
-                        'id': obj_id,
-                        'area': ann['area'],
-                        'bbox': ann['bbox'],
-                        'num_keypoints': 1,
-                        'keypoints': keypoints,
-                        'segmentation': ann['segmentation']})#[segmentation]})
-                obj_id = obj_id+1
-    #sdsd
-    loop=0
-    count_images=0
     for sub_dir in os.listdir(path_dir):
-        loop= loop+1
+        json_name = sub_dir + '.json'
         im_dir = os.path.join(
-                sub_dir,
-                args.image_dir)
+                args.image_dir,
+                sub_dir)
 
         sub_dir = path_dir + sub_dir + '/gt/'#os.path.join(path_dir, sub_dir)
         #sub_dir = os.path.join(sub_dir, '/gt/')
         if not os.path.isdir(sub_dir):
             continue
 
+        data["images"] = []
+        data["annotations"] = []
 
         # loop through all annotation file inside sub_dir
-        # loop through all annotation file inside sub_dir
-        #print(sub_dir)
-        #asas
-        for file_name in os.listdir(sub_dir):
-            count_images =count_images+1
+
+        for file_name in os.listdir(label_dir):
             file_str = file_name.split('.')[0]
             vid_str, id_str  = file_str.split('_')
             frame_id = int(id_str)
             video_id = int(vid_str)
-            image_id = int(loop*1e8+video_id*1e5+frame_id)
+            image_id = int(video_id*1e5+frame_id)
 
             image_name = os.path.join(
                     im_dir,
-                    "{}.jpg".format(file_str))
+                    "{}.png".format(file_str))
 
             width, height = 1920, 1080
-	
+
             data["images"].append({'flickr_url': "unknown",
                 'coco_url': "unknown",
-                'file_name': image_name,
+                'file_name': os.path.basename(image_name),
                 'id': image_id,
                 'license':1,
-		#'has_visible_keypoints':True,
                 'date_captured': "unknown",
                 'width': width,
                 'height': height})
@@ -239,61 +172,41 @@ if __name__ == "__main__":
                 keypoints = [list(map(num, s)) for s in keypoints]
 
             instances = {}
-
             for keypoint in keypoints:
                 if keypoint[3] not in instances:
                     instances[keypoint[3]] = np.zeros((14, 3), dtype=np.int32)
                 instances[keypoint[3]][keypoint[2]-1,0] = keypoint[0]
                 instances[keypoint[3]][keypoint[2]-1,1] = keypoint[1]
-                if keypoint[4] == 2:
-                    instances[keypoint[3]][keypoint[2]-1,2] = 1
-                elif keypoint[4] == 1:
-                    instances[keypoint[3]][keypoint[2]-1,2] = 2#keypoint[4]
-                elif keypoint[4] == 3:
-                    instances[keypoint[3]][keypoint[2]-1,2] = 2#keypoint[4]
-
-                if keypoint[0] <= 0 or keypoint[1] > height or keypoint[1] <= 0 or keypoint[0] > width:
-                    #print(keypoint[1])
-
-                    instances[keypoint[3]][keypoint[2]-1,2] = 0#keypoint[4]\
-                    #print(instances[keypoint[3]])
-
-            #print(instances)
-            #asas
+                instances[keypoint[3]][keypoint[2]-1,2] = 2
 
             for instance in instances.values():
 
                 bbox, segmentation, keypoints, num_keypoints = getAnnotation(instance)
-                #print(keypoints)
 
                 if num_keypoints == 0:
                     continue
-                
-                keypoints[-1]=2
-                keypoints[-3]=bbox[0]+bbox[2]/2
-                keypoints[-2]=bbox[1]+bbox[3]/2
-                print(num_keypoints,keypoints)
+
                 data["annotations"].append({
                     'image_id': image_id,
                     'category_id': 1,
                     'iscrowd': 0,
-                    #'has_visible_keypoints': True,
                     'id': obj_id,
                     'area': bbox[2]*bbox[3],
                     'bbox': bbox,
                     'num_keypoints': num_keypoints,
                     'keypoints': keypoints,
-                    'segmentation': [segmentation]})
+                    'segmentation': [segmentation],
+                    })
 
                 obj_id += 1
-    #json_name = 'carfusion.json'
-    json_str = json.dumps(data)
+        json_str = json.dumps(data)
 
-    #print(json_name,count_images)
-    ann_file = os.path.join(args.output_dir, json_name)
-    if not os.path.exists(args.output_dir):
-         os.mkdir(args.output_dir)
-    with open(ann_file, 'w') as f:
-         f.write(json_str)
+
+        ann_file = os.path.join(args.output_dir, json_name)
+        if not os.path.exists(args.output_dir):
+            os.mkdir(args.output_dir)
+        with open(ann_file, 'w') as f:
+            f.write(json_str)
+
 
 
