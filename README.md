@@ -14,7 +14,7 @@ cd Combined-Keypoints
 ### 2. Install Required Libraries
 Install required python libraries
 ```
-virtualenv Combined-Keypoints -p python3
+virtualenv Combined-Keypoints -p python3.6
 source Combined-Keypoints/bin/activate
 pip3 install cython
 pip3 install -r requirements.txt
@@ -82,14 +82,5 @@ wget http://www.cs.cmu.edu/~ILIM/projects/IM/CarFusion/Dataset.zip
 unzip Dataset.zip
 mv Dataset train
 cd ..
-```
-
-change the path to load images
-
-```
-vim  Detector/lib/core/config.py
-in line 1064 specify the path to the training directory
-```
-```
 sh train.sh
 ```
