@@ -897,7 +897,7 @@ __C.KRCNN.DILATION = 1
 __C.KRCNN.DECONV_KERNEL = 4
 
 # Number of keypoints in the dataset (e.g., 17 for COCO)
-__C.KRCNN.NUM_KEYPOINTS = -1
+__C.KRCNN.NUM_KEYPOINTS = 14
 
 # Number of stacked Conv layers in keypoint head
 __C.KRCNN.NUM_STACKED_CONVS = 8
@@ -1061,7 +1061,7 @@ __C.EXPECTED_RESULTS_EMAIL = ''
 
 # ------------------------------
 # Data directory
-__C.DATA_DIR = '/media/Car/Carfusion_Dataset/'#osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
+__C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
 
 # [Deprecate]
 __C.POOLING_MODE = 'crop'
