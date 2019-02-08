@@ -73,10 +73,23 @@ sh test.sh 0 0 demo/
 
 
 ```
+cd Detector
+mkdir data
+cd data
+mkdir fifth
+cd fifth
 wget http://www.cs.cmu.edu/~ILIM/projects/IM/CarFusion/Dataset.zip
+unzip Dataset.zip
+mv Dataset train
+cd ..
+```
 
-unzip Dataset
+change the path to load images
 
-
+```
+vim  Detector/lib/core/config.py
+in line 1064 specify the path to the training directory
+```
+```
 sh train.sh
 ```
